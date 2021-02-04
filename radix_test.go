@@ -34,9 +34,22 @@ func GenerateTestString(size int64) string {
 	return string(b)
 }
 
+func CreateSubstrings(str string) {
+	runes := []rune(str)
+	// Loop over string in order to acquire substrings
+	// from the end to the beginning
+	// var substringArray [len(runes)]string
+	for start := 1; start < len(runes); start++ {
+		substring := string(runes[start:len(runes)])
+		fmt.Println(substring)
+	}
+	return
+}
+
 func TestInsert(t *testing.T) {
 	// r := New()
 	InitSeed()
 	test_str := GenerateTestString(16)
 	fmt.Println(test_str)
+	CreateSubstrings(test_str)
 }
