@@ -34,16 +34,25 @@ func GenerateTestString(size int64) string {
 	return string(b)
 }
 
-func CreateSubstrings(str string) {
+func CreateSubstrings(str string) []string {
 	runes := []rune(str)
 	// Loop over string in order to acquire substrings
 	// from the end to the beginning
-	// var substringArray [len(runes)]string
+	var substringArray []string
 	for start := 1; start < len(runes); start++ {
 		substring := string(runes[start:len(runes)])
+		substringArray = append(substringArray, substring)
 		fmt.Println(substring)
 	}
-	return
+	return substringArray
+}
+
+func FillRadixTree(substringArray []string) {
+	r := New()
+	for i := 0; i < len(substringArray); i++ {
+		r.Insert(substringArray[i], 1)
+		// fmt.Println(substringArray[i], " inserted")
+	}
 }
 
 func TestInsert(t *testing.T) {
@@ -51,5 +60,6 @@ func TestInsert(t *testing.T) {
 	InitSeed()
 	test_str := GenerateTestString(16)
 	fmt.Println(test_str)
-	CreateSubstrings(test_str)
+	var substringArray []string = CreateSubstrings(test_str)
+	FillRadixTree(substringArray)
 }
