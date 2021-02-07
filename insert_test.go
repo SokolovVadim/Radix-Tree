@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+const (
+	LENGTH = 65536
+)
+
 func InitSeed() {
 	rand.Seed(time.Now().UnixNano())
 }
@@ -34,24 +38,16 @@ func CreateSubstrings(str string) []string {
 }
 
 func FillRadixTree(r *Tree, substringArray []string) {
-	// r := New()
 	for i := 0; i < len(substringArray); i++ {
 		r.Insert(substringArray[i], i)
 		// fmt.Println(substringArray[i], " inserted")
 	}
-	/*	for i := 0; i < len(substringArray); i++ {
-		value, ok := r.Get(substringArray[i])
-		if(ok) {
-			fmt.Println(value)
-		}
-	}*/
 }
 
 // go test -bench=. -benchmem
-
 func BenchmarkInsert(b *testing.B) {
 	InitSeed()
-	test_str := GenerateTestString(65535)
+	test_str := GenerateTestString(LENGTH)
 	// fmt.Println(test_str)
 	r := New()
 	var substringArray []string = CreateSubstrings(test_str)
