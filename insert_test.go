@@ -1,24 +1,10 @@
 package radix
 
 import (
-	"fmt"
 	"math/rand"
 	"testing"
 	"time"
 )
-
-func TestRadixInterface(t *testing.T) {
-	r := New()
-	r.Insert("foo", 1)
-	r.Insert("bar", 2)
-	r.Insert("foobar", 2)
-
-	value, ok := r.Get("foo")
-	if(ok) {
-		fmt.Println(value)
-	}
-	// fmt.Printf("%s", r.Get("foo"))
-}
 
 func InitSeed() {
 	rand.Seed(time.Now().UnixNano())
@@ -42,24 +28,32 @@ func CreateSubstrings(str string) []string {
 	for start := 1; start < len(runes); start++ {
 		substring := string(runes[start:len(runes)])
 		substringArray = append(substringArray, substring)
-		fmt.Println(substring)
+		// fmt.Println(substring)
 	}
 	return substringArray
 }
 
-func FillRadixTree(substringArray []string) {
-	r := New()
+func FillRadixTree(r *Tree, substringArray []string) {
+	// r := New()
 	for i := 0; i < len(substringArray); i++ {
-		r.Insert(substringArray[i], 1)
+		r.Insert(substringArray[i], i)
 		// fmt.Println(substringArray[i], " inserted")
 	}
+	/*	for i := 0; i < len(substringArray); i++ {
+		value, ok := r.Get(substringArray[i])
+		if(ok) {
+			fmt.Println(value)
+		}
+	}*/
 }
 
-func TestInsert(t *testing.T) {
-	// r := New()
+// go test -bench=. -benchmem
+
+func BenchmarkInsert(b *testing.B) {
 	InitSeed()
-	test_str := GenerateTestString(16)
-	fmt.Println(test_str)
+	test_str := GenerateTestString(65535)
+	// fmt.Println(test_str)
+	r := New()
 	var substringArray []string = CreateSubstrings(test_str)
-	FillRadixTree(substringArray)
+	FillRadixTree(r, substringArray)
 }
