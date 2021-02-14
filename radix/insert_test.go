@@ -1,13 +1,14 @@
-package radix
+package radix_test
 
 import (
 	"math/rand"
 	"testing"
 	"time"
+	"github.com/SokolovVadim/Radix-Tree"
 )
 
 const (
-	LENGTH = 65536
+	Lenght = 65536
 )
 
 func InitSeed() {
@@ -37,7 +38,7 @@ func CreateSubstrings(str string) []string {
 	return substringArray
 }
 
-func FillRadixTree(r *Tree, substringArray []string) {
+func FillRadixTree(r *radix.Tree, substringArray []string) {
 	for i := 0; i < len(substringArray); i++ {
 		r.Insert(substringArray[i], i)
 		// fmt.Println(substringArray[i], " inserted")
@@ -47,9 +48,9 @@ func FillRadixTree(r *Tree, substringArray []string) {
 // go test -bench=. -benchmem
 func BenchmarkInsert(b *testing.B) {
 	InitSeed()
-	test_str := GenerateTestString(LENGTH)
+	test_str := GenerateTestString(Lenght)
 	// fmt.Println(test_str)
-	r := New()
+	r := radix.New()
 	var substringArray []string = CreateSubstrings(test_str)
 	FillRadixTree(r, substringArray)
 }
