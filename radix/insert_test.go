@@ -7,17 +7,13 @@ import (
 	"github.com/SokolovVadim/Radix-Tree"
 )
 
-const (
-	Lenght = 65536
-)
-
 func InitSeed() {
 	rand.Seed(time.Now().UnixNano())
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-func GenerateTestString(size int64) string {
+func GenerateTestString(size int) string {
 	b := make([]byte, size)
 	for i := range b {
 		b[i] = letterBytes[rand.Intn(len(letterBytes))]
@@ -38,19 +34,21 @@ func CreateSubstrings(str string) []string {
 	return substringArray
 }
 
-func FillRadixTree(r *radix.Tree, substringArray []string) {
-	for i := 0; i < len(substringArray); i++ {
+func FillRadixTree(size int, r *radix.Tree, substringArray []string) {
+	for i := 0; i < size - 1; i++ {
 		r.Insert(substringArray[i], i)
 		// fmt.Println(substringArray[i], " inserted")
 	}
 }
 
-// go test -bench=. -benchmem
+// go test -bench=. -benchmem -benchtime=100x
 func BenchmarkInsert(b *testing.B) {
 	InitSeed()
-	test_str := GenerateTestString(Lenght)
+	test_str := GenerateTestString(b.N)
 	// fmt.Println(test_str)
 	r := radix.New()
 	var substringArray []string = CreateSubstrings(test_str)
-	FillRadixTree(r, substringArray)
+
+	b.ResetTimer()
+	FillRadixTree(b.N, r, substringArray)
 }
