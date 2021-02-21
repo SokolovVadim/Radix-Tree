@@ -1,10 +1,10 @@
 package radix_test
 
 import (
+	"github.com/SokolovVadim/Radix-Tree"
 	"math/rand"
 	"testing"
 	"time"
-	"github.com/SokolovVadim/Radix-Tree"
 )
 
 func InitSeed() {

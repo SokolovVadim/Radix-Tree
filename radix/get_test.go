@@ -1,16 +1,15 @@
 package radix_test
 
 import (
-	"fmt"
 	"github.com/SokolovVadim/Radix-Tree"
 	"reflect"
 	"testing"
 )
 
 const (
-	Length = 30
-	LeftPos = 10
-	RightPos = 20
+	Length = 65535
+	LeftPos = 10200
+	RightPos = 10450
 )
 
 func GetSubstring(b *testing.B, r *radix.Tree, subString string,
@@ -34,7 +33,7 @@ func GetSubstring(b *testing.B, r *radix.Tree, subString string,
 func BenchmarkGet(b *testing.B) {
 	InitSeed()
 	testStr := GenerateTestString(Length)
-	fmt.Println(testStr)
+	// fmt.Println(testStr)
 	r := radix.New()
 	var substringArray = CreateSubstrings(testStr)
 	FillRadixTree(Length, r, substringArray)
