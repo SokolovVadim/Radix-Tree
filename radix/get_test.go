@@ -2,19 +2,18 @@ package radix_test
 
 import (
 	"github.com/SokolovVadim/Radix-Tree"
-	"reflect"
 	"testing"
 )
 
 const (
-	Length = 65535
-	LeftPos = 10200
-	RightPos = 10450
+	length   = 65536
+	leftPos  = 10200
+	rightPos = 10450
 )
 
-func GetSubstring(b *testing.B, r *radix.Tree, subString string,
+func getSubstring(b *testing.B, r *radix.Tree, subString string,
 	              testStr string) (str string, val interface{}) {
-	var out string
+	var out interface{}
 	var pos interface{}
 	// there is only one possible match for a string
 	fn := func(s string, v interface{}) bool {
@@ -23,23 +22,21 @@ func GetSubstring(b *testing.B, r *radix.Tree, subString string,
 	}
 
 	r.WalkPrefix(subString, fn)
-	// fmt.Println("out:", out, "pos =", pos)
-	if !reflect.DeepEqual(out, testStr[LeftPos: Length]) {
+	if result, ok := out.(string); !ok || result != testStr[leftPos:length] {
 		b.Fatalf("mis-match: %v %v", out, subString)
 	}
-	return out, pos
+	return out.(string), pos
 }
 
 func BenchmarkGet(b *testing.B) {
-	InitSeed()
-	testStr := GenerateTestString(Length)
-	// fmt.Println(testStr)
+	initSeed()
+	testStr := generateTestString(length)
 	r := radix.New()
-	var substringArray = CreateSubstrings(testStr)
-	FillRadixTree(Length, r, substringArray)
+	var substringArray = createSubstrings(testStr)
+	fillRadixTree(length, r, substringArray)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		GetSubstring(b, r, testStr[LeftPos: RightPos], testStr)
+		getSubstring(b, r, testStr[leftPos: rightPos], testStr)
 	}
 }
