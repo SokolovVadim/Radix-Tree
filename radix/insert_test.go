@@ -1,22 +1,19 @@
-package radix
+package radix_test
 
 import (
+	"github.com/SokolovVadim/Radix-Tree"
 	"math/rand"
 	"testing"
 	"time"
 )
 
-const (
-	LENGTH = 65536
-)
-
-func InitSeed() {
+func initSeed() {
 	rand.Seed(time.Now().UnixNano())
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-func GenerateTestString(size int64) string {
+func generateTestString(size int) string {
 	b := make([]byte, size)
 	for i := range b {
 		b[i] = letterBytes[rand.Intn(len(letterBytes))]
@@ -24,7 +21,7 @@ func GenerateTestString(size int64) string {
 	return string(b)
 }
 
-func CreateSubstrings(str string) []string {
+func createSubstrings(str string) []string {
 	runes := []rune(str)
 	// Loop over string in order to acquire substrings
 	// from the end to the beginning
@@ -37,19 +34,20 @@ func CreateSubstrings(str string) []string {
 	return substringArray
 }
 
-func FillRadixTree(r *Tree, substringArray []string) {
-	for i := 0; i < len(substringArray); i++ {
+func fillRadixTree(size int, r *radix.Tree, substringArray []string) {
+	for i := 0; i < size - 1; i++ {
 		r.Insert(substringArray[i], i)
 		// fmt.Println(substringArray[i], " inserted")
 	}
 }
 
-// go test -bench=. -benchmem
+// go test -bench=. -benchmem -benchtime=100x
 func BenchmarkInsert(b *testing.B) {
-	InitSeed()
-	test_str := GenerateTestString(LENGTH)
-	// fmt.Println(test_str)
-	r := New()
-	var substringArray []string = CreateSubstrings(test_str)
-	FillRadixTree(r, substringArray)
+	initSeed()
+	testStr := generateTestString(length)
+	r := radix.New()
+	var substringArray []string = createSubstrings(testStr)
+
+	b.ResetTimer()
+	fillRadixTree(b.N, r, substringArray)
 }
