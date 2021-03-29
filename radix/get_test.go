@@ -2,6 +2,8 @@ package radix_test
 
 import (
 	"github.com/SokolovVadim/Radix-Tree"
+	"io/ioutil"
+	"log"
 	"testing"
 )
 
@@ -29,8 +31,13 @@ func getSubstring(b *testing.B, r *radix.Tree, subString string,
 }
 
 func BenchmarkGet(b *testing.B) {
-	initSeed()
-	testStr := generateTestString(length)
+	content, err := ioutil.ReadFile("C:\\Users\\Vadim\\GolandProjects\\Radix-Tree\\utils\\data.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convert []byte to string
+	testStr := string(content)
 	r := radix.New()
 	var substringArray = createSubstrings(testStr)
 	fillRadixTree(length, r, substringArray)

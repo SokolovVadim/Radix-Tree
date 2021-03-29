@@ -2,24 +2,10 @@ package radix_test
 
 import (
 	"github.com/SokolovVadim/Radix-Tree"
-	"math/rand"
+	"io/ioutil"
+	"log"
 	"testing"
-	"time"
 )
-
-func initSeed() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-func generateTestString(size int) string {
-	b := make([]byte, size)
-	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
-	}
-	return string(b)
-}
 
 func createSubstrings(str string) []string {
 	runes := []rune(str)
@@ -43,8 +29,13 @@ func fillRadixTree(size int, r *radix.Tree, substringArray []string) {
 
 // go test -bench=. -benchmem -benchtime=100x
 func BenchmarkInsert(b *testing.B) {
-	initSeed()
-	testStr := generateTestString(length)
+	content, err := ioutil.ReadFile("C:\\Users\\Vadim\\GolandProjects\\Radix-Tree\\utils\\data.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convert []byte to string
+	testStr := string(content)
 	r := radix.New()
 	var substringArray []string = createSubstrings(testStr)
 
