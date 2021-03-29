@@ -7,7 +7,10 @@ import (
 	"log"
 	"os"
 	"testing"
+	"unicode"
 )
+
+const max_size = 120000
 
 func parseJson(filename string) (string, error) {
 	jsonFile, err := os.Open(filename)
@@ -25,17 +28,18 @@ func parseJson(filename string) (string, error) {
 	sc := bufio.NewScanner(jsonFile)
 	var line string
 	var result string
+	//var counter = 0
 	for sc.Scan() {
 		line = sc.Text()  // GET the line string
-		// println(line)
 		byteStream := make(map[string] interface{})
+
 		err = json.Unmarshal([]byte(line), &byteStream)
 		if err != nil {
 			fmt.Println(err)
 		}
-		// println("review:")
-		if byteStream["reviewText"] != nil{
-			result += byteStream["reviewText"].(string) + " "
+		text, ok := byteStream["reviewText"].(string)
+		if ok {
+			result += preprocessData(text) + " "
 		}
 	}
 	if err := sc.Err(); err != nil {
@@ -61,12 +65,22 @@ func writeToFile(text string) error {
 	return err
 }
 
+func preprocessData(text string) string {
+	byteSeq := []byte(text)
+	for pos, char := range text {
+		if !unicode.IsLetter(char) {
+			byteSeq[pos] = ' '
+		}
+	}
+	return string(byteSeq)
+}
+
 func TestParseJson(t *testing.T) {
-	text, err := parseJson("C:\\Users\\Vadim\\GolandProjects\\Magazine_Subscriptions\\Magazine_Subscriptions.json")
+	text, err := parseJson("C:\\Users\\Vadim\\GolandProjects\\Gift_Cards\\Gift_Cards.json")
 	if err != nil {
 		t.Errorf("ParseJson failed! Error: %v", err)
 	}
-	err = writeToFile(text)
+	err = writeToFile(text[:max_size])
 	if err != nil {
 		t.Errorf("writeToFile failed! Error: %v", err)
 	}
