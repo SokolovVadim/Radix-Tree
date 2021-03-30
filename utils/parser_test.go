@@ -10,7 +10,7 @@ import (
 	"unicode"
 )
 
-const max_size = 120000
+const max_size = 9000000
 
 func parseJson(filename string) (string, error) {
 	jsonFile, err := os.Open(filename)
@@ -30,6 +30,9 @@ func parseJson(filename string) (string, error) {
 	var result string
 	//var counter = 0
 	for sc.Scan() {
+		if len(result) > max_size {
+			break
+		}
 		line = sc.Text()  // GET the line string
 		byteStream := make(map[string] interface{})
 
