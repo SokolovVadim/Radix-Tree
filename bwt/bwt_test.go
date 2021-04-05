@@ -1,35 +1,29 @@
 package bwt
 
 import (
-	"index/suffixarray"
 	"testing"
 )
 
-type rotation struct {
-	index int
-	suffix string
-}
-
-func bwTransform(sa* suffixarray.Index, text string) []uint8 {
+func NaiveBWT(sa* suffixarrayx, text string) []byte {
 	textLen := len(text)
-	var bwtArr []uint8
+	btwArr := make([]byte, textLen)
 	for i := 0; i < textLen; i++ {
-		println(sa.Bytes()[i])
-		j := int(sa.Bytes()[i]) - 1
+		j := sa.index[i] - 1
 		if j < 0 {
-			j = j + textLen
+			j += textLen
 		}
-		bwtArr = append(bwtArr, text[j])
+		btwArr[i] = text[j]
 	}
-	return bwtArr
+	return btwArr
 }
 
 func BenchmarkBWT(b *testing.B) {
-	var input = "abracadabra"
-	sa := suffixarray.New([]byte(input))
+	var input = "SIX.MIXED.PIXIES.SIFT.SIXTY.PIXIE.DUST.BOXES$"
+	sa := NewSuffixArrayX(input)
 
-	btwArr := bwTransform(sa, input)
-	for i := 0; i < len(btwArr); i++ {
-		println(btwArr)
+	btwArr := NaiveBWT(sa, input)
+	println(string(btwArr))
+	if string(btwArr) != "STEXYDST.E.IXXIIXXSSMPPS.B..EE.$.USFXDIIOIIIT" {
+		b.Errorf("NaiveBWT is wrong, %s", string(btwArr))
 	}
 }
