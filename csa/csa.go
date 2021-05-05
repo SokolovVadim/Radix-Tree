@@ -2,13 +2,15 @@ package csa
 
 import (
 	"fmt"
+	"github.com/RoaringBitmap/roaring"
 )
 const err = -1
 
 type Csa struct {
-	psi  []int
-	sa   []int
 	text []rune
+	sa   []int
+	psi  []int
+	rb   *roaring.Bitmap
 	len int
 }
 
@@ -22,6 +24,7 @@ func newCsaFromSa(sa* suffixarrayx) *Csa {
 	csa.sa = sa.index
 	csa.len = sa.n
 	csa.text = sa.text
+	csa.rb = roaring.NewBitmap()
 	return csa
 }
 
@@ -43,6 +46,8 @@ func printContents(this *Csa) () {
 	for _, i := range this.psi {
 		fmt.Printf("%v ", i)
 	}
+	println("\nBitmap:")
+	fmt.Println(this.rb.String())
 	println("\n=========== End of printing ===========")
 }
 
@@ -59,22 +64,41 @@ func naiveBWT(sa* suffixarrayx, text string) []byte {
 	return bwtArr
 }
 
-func findIndex(sa* suffixarrayx, idx int) int {
-	for i := 0; i < sa.n; i++ {
-		if idx == sa.index[i] {
+func findIndex(saIndex []int, idx int) int {
+	for i := 0; i < len(saIndex); i++ {
+		if idx == saIndex[i] {
 			return i
 		}
 	}
 	return err
 }
 
-func naivePsi(sa* suffixarrayx, text string) []int {
-	textLen := len(text)
-	psiArr := make([]int, textLen)
+func naivePsi(csa* Csa) []int {
+	psiArr := make([]int, csa.len)
 	// assume PSI[0] = '$'
-	psiArr[0] = '$'
-	for i := 1; i < textLen; i++ {
-		psiArr[i] = findIndex(sa, sa.index[i] + 1)
+	psiArr[0] = 0
+	for i := 1; i < csa.len; i++ {
+		psiArr[i] = findIndex(csa.sa, csa.sa[i] + 1)
 	}
+	csa.psi = psiArr
 	return psiArr
+}
+
+func createBitVector(csa* Csa) {
+	bv := make([]uint32, csa.len * 2)
+	for i := 0; i < csa.len * 2; i++ {
+		bv[i] = 0
+	}
+	for i := 0; i < csa.len; i++ {
+		println("i = ", i, ", psi[i] = ", csa.psi[i], ", i + psi[i] = ", i + csa.psi[i])
+		bv[i + csa.psi[i]] = 1
+	}
+	for _, i := range bv {
+		fmt.Printf("%v ", i)
+	}
+	csa.rb.AddMany(bv)
+}
+
+func efCompress(csa* Csa) {
+
 }

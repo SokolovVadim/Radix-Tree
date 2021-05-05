@@ -1,4 +1,5 @@
 package csa
+
 import (
 	"testing"
 )
@@ -28,10 +29,10 @@ func rank(bv []byte, x int) {
 func BenchmarkCSA(b *testing.B) {
 	println("hello!")
 	// csa := newCsa()
-	input := "happypuppy$"
+	input := "abbaabbaaababbb$"
 	sa := NewSuffixArrayX(input)
 	csa := newCsaFromSa(sa)
-	psiArr := naivePsi(sa, input)
-	csa.psi = psiArr
+	csa.psi = naivePsi(csa)
+	createBitVector(csa)
 	printContents(csa)
 }
