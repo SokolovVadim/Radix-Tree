@@ -27,6 +27,11 @@ func rank(bv []byte, x int) {
 
 func BenchmarkCSA(b *testing.B) {
 	println("hello!")
-	csa := newCsa()
+	// csa := newCsa()
+	input := "happypuppy$"
+	sa := NewSuffixArrayX(input)
+	csa := newCsaFromSa(sa)
+	psiArr := naivePsi(sa, input)
+	csa.psi = psiArr
 	printContents(csa)
 }
