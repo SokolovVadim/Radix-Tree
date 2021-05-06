@@ -4,21 +4,21 @@ import (
 	"testing"
 )
 
-func select_(sa Csa, k int, c int) int {
+func select_(csa Csa, k int, c int) int {
 	if k <= 0 {
 		return err
 	}
-	idx := sa.sa[c]
+	idx := csa.sa[c]
 	if idx == 0 && c != 0 {
-		return sa.len
+		return csa.len
 	}
 	if idx == 255 {
 		return err
 	}
-	if int(sa.sa[idx]) + k - 1 < int(sa.sa[idx + 1]) {
-		return int(sa.psi[int(sa.sa[idx]) + k - 1])
+	if int(csa.sa[idx]) + k - 1 < int(csa.sa[idx + 1]) {
+		return int(csa.psi[int(csa.sa[idx]) + k - 1])
 	} else {
-		return sa.len
+		return csa.len
 	}
 }
 

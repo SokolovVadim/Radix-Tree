@@ -11,6 +11,8 @@ type Csa struct {
 	sa   []int
 	psi  []int
 	rb   *roaring.Bitmap
+	bv   []uint32
+	ef   *EliasFano
 	len int
 }
 
@@ -44,6 +46,10 @@ func printContents(this *Csa) () {
 	}
 	println("\nPsi array:")
 	for _, i := range this.psi {
+		fmt.Printf("%v ", i)
+	}
+	println("\nBit vector:")
+	for _, i := range this.bv {
 		fmt.Printf("%v ", i)
 	}
 	println("\nBitmap:")
@@ -85,20 +91,21 @@ func naivePsi(csa* Csa) []int {
 }
 
 func createBitVector(csa* Csa) {
-	bv := make([]uint32, csa.len * 2)
-	for i := 0; i < csa.len * 2; i++ {
+	// length = N + #items ~= length * 2
+	length := csa.len * 2
+	bv := make([]uint32, length)
+	for i := 0; i < length; i++ {
 		bv[i] = 0
 	}
 	for i := 0; i < csa.len; i++ {
 		println("i = ", i, ", psi[i] = ", csa.psi[i], ", i + psi[i] = ", i + csa.psi[i])
 		bv[i + csa.psi[i]] = 1
 	}
-	for _, i := range bv {
-		fmt.Printf("%v ", i)
-	}
+	csa.bv = bv
 	csa.rb.AddMany(bv)
 }
 
 func efCompress(csa* Csa) {
-
+	csa.ef = NewEF(uint64(csa.psi[csa.len-1]), uint64(csa.len))
+	// csa.ef.Compress(csa.psi)
 }
