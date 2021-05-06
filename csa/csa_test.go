@@ -22,8 +22,16 @@ func select_(csa Csa, k int, c int) int {
 	}
 }
 
-func rank(bv []byte, x int) {
-
+// returns number of 1s from bv
+// to the left of position x
+func rank(bv []byte, x int) int {
+	var sum int
+	for i := 0; i < x; i++ {
+		if bv[i] == 1 {
+			sum++
+		}
+	}
+	return sum
 }
 
 func BenchmarkCSA(b *testing.B) {
@@ -34,5 +42,6 @@ func BenchmarkCSA(b *testing.B) {
 	csa := newCsaFromSa(sa)
 	csa.psi = naivePsi(csa)
 	createBitVector(csa)
+	efCompress(csa)
 	printContents(csa)
 }
