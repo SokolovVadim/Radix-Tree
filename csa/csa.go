@@ -106,6 +106,7 @@ func createBitVector(csa* Csa) {
 }
 
 func efCompress(csa* Csa) {
+	// create an Elias-Fano sequence with maximum element from psi
 	csa.ef = NewEF(uint64(csa.psi[csa.len-1]), uint64(csa.len))
 	// csa.ef.Compress(csa.psi)
 }

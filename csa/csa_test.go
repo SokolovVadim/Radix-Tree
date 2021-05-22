@@ -44,4 +44,6 @@ func BenchmarkCSA(b *testing.B) {
 	createBitVector(csa)
 	efCompress(csa)
 	printContents(csa)
+
+	// 
 }
