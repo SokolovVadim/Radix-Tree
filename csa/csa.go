@@ -10,7 +10,7 @@ type Csa struct {
 	suffixOffsets   []int
 	psi  []int
 	rb   *roaring.Bitmap
-	bv   []uint32
+	bv   []int
 	ef   *CompressedText
 	len int
 }
@@ -68,10 +68,10 @@ func (csa* Csa)naivePsi() []int {
 	return psiArr
 }
 
-func createBitVector(csa* Csa) {
+func (csa* Csa) createBitVector() {
 	// length = N + #items ~= length * 2
 	length := csa.len * 2
-	bv := make([]uint32, length)
+	bv := make([]int, length)
 	for i := 0; i < length; i++ {
 		bv[i] = 0
 	}
@@ -80,11 +80,11 @@ func createBitVector(csa* Csa) {
 		bv[i + csa.psi[i]] = 1
 	}
 	csa.bv = bv
-	csa.rb.AddMany(bv)
+	// csa.rb.AddMany(bv)
 }
 
-func efCompress(csa* Csa) {
+func (csa* Csa)efCompress() {
 	// create an Elias-Fano sequence with maximum element from psi
 	csa.ef = NewEF(uint64(csa.psi[csa.len-1]), uint64(csa.len))
-	// csa.ef.Compress(csa.psi)ls
+	csa.ef.Compress(csa.psi)
 }

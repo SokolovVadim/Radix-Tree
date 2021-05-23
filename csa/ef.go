@@ -2,7 +2,7 @@ package csa
 // https://github.com/amallia/go-ef
 import (
 	"errors"
-	"github.com/willf/bitset"
+	"github.com/RoaringBitmap/roaring"
 	"log"
 	"math"
 )
@@ -27,7 +27,8 @@ type CompressedText struct {
 	mask             uint64
 	lowerBitsOffset  uint64
 	bvLen            uint64
-	b                *bitset.BitSet
+	b                *roaring.Bitmap
+	// bv *roaring.Bitmap
 	curValue         uint64
 	position         uint64
 	highBitsPos      uint64
@@ -43,7 +44,7 @@ func NewEF(universe uint64, n uint64) *CompressedText {
 	mask := (uint64(1) << lowerBits) - 1
 	lowerBitsOffset := higherBitsLength
 	bvLen := lowerBitsOffset + n*uint64(lowerBits)
-	b := bitset.New(uint(bvLen))
+	b := roaring.NewBitmap()
 	return &CompressedText{universe, n, lowerBits, higherBitsLength, mask, lowerBitsOffset, bvLen, b, 0, 0, 0}
 }
 
@@ -60,7 +61,7 @@ func (ef *CompressedText) Compress(elems []uint64) {
 		}
 		high := (elem >> ef.lowerBits) + uint64(i) + 1
 		low := elem & ef.mask
-		ef.b.Set(uint(high))
+		ef.b.Add(uint32(high))
 		offset := ef.lowerBitsOffset + uint64(i)*ef.lowerBits
 		setBits(ef.b, offset, low, ef.lowerBits)
 		last = elem
@@ -111,33 +112,49 @@ func (ef *CompressedText) Size() uint64 {
 
 // Bitsize returns the size of the internal bitvector.
 func (ef *CompressedText) Bitsize() uint64 {
-	return uint64(ef.b.BinaryStorageSize())
+	return uint64(ef.b.GetSizeInBytes())
 }
 
-func setBits(b *bitset.BitSet, offset uint64, bits uint64, length uint64) {
+func SetTo(b* roaring.Bitmap, i uint32, value bool) {
+	if value {
+		b.Add(i)
+	} else {
+		b.Remove(i)
+	}
+}
+
+func setBits(b *roaring.Bitmap, offset uint64, bits uint64, length uint64) {
 	for i := uint64(0); i < length; i++ {
 		val := bits & (1 << (length - i - 1))
-		b.SetTo(uint(offset+i+1), val > 0)
+		SetTo(b, uint32(offset+i+1), val > 0)
 	}
 }
 
 func (ef *CompressedText) readCurrentValue() {
-	pos := uint(ef.highBitsPos)
+	value, _ := ef.b.Select(uint32(ef.highBitsPos))
+	ef.curValue = uint64(value)
+	/*pos := uint(ef.highBitsPos)
 	if pos > 0 {
 		pos++
 	}
-	pos, _ = ef.b.NextSet(pos)
+    // ??????????
+	// pos, _ = ef.b.NextSet(pos)
+	i := ef.b.Iterator()
+	if i.HasNext() {
+		pos = ef.b.
+	}
+	i.Next()
 	ef.highBitsPos = uint64(pos)
 	low := uint64(0)
 	offset := ef.lowerBitsOffset + ef.position*ef.lowerBits
 	for i := uint64(0); i < ef.lowerBits; i++ {
-		if ef.b.Test(uint(offset + i + 1)) {
+		if ef.b.Contains(uint32(offset + i + 1)) {
 			low++
 		}
 		low = low << 1
 	}
 	low = low >> 1
-	ef.curValue = uint64(((ef.highBitsPos - ef.position - 1) << ef.lowerBits) | low)
+	ef.curValue = uint64(((ef.highBitsPos - ef.position - 1) << ef.lowerBits) | low)*/
 }
 
 func round(a float64) int64 {
