@@ -6,17 +6,17 @@ import (
 
 func select_(csa Csa, k int, c int) int {
 	if k <= 0 {
-		return err
+		return indexNotFound
 	}
-	idx := csa.sa[c]
+	idx := csa.suffixOffsets[c]
 	if idx == 0 && c != 0 {
 		return csa.len
 	}
 	if idx == 255 {
-		return err
+		return indexNotFound
 	}
-	if int(csa.sa[idx]) + k - 1 < int(csa.sa[idx + 1]) {
-		return int(csa.psi[int(csa.sa[idx]) + k - 1])
+	if int(csa.suffixOffsets[idx]) + k - 1 < int(csa.suffixOffsets[idx + 1]) {
+		return int(csa.psi[int(csa.suffixOffsets[idx]) + k - 1])
 	} else {
 		return csa.len
 	}
@@ -38,12 +38,16 @@ func BenchmarkCSA(b *testing.B) {
 	println("hello!")
 	// csa := newCsa()
 	input := "abbaabbaaababbb$"
-	sa := NewSuffixArrayX(input)
+	/*sa := NewSuffixArrayX(input)
 	csa := newCsaFromSa(sa)
 	csa.psi = naivePsi(csa)
 	createBitVector(csa)
 	efCompress(csa)
+	printContents(csa)*/
+	csa := newCsa(input)
+	csa.psi = naivePsi(csa)
+	createBitVector(csa)
+	efCompress(csa)
 	printContents(csa)
-
 	// 
 }

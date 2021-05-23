@@ -19,7 +19,7 @@ Bitvector length: %d
 )
 
 // EliasFano codec structure
-type EliasFano struct {
+type CompressedText struct {
 	universe         uint64
 	n                uint64
 	lowerBits        uint64
@@ -34,7 +34,7 @@ type EliasFano struct {
 }
 
 // New creates a new empty EliasFano object
-func NewEF(universe uint64, n uint64) *EliasFano {
+func NewEF(universe uint64, n uint64) *CompressedText {
 	var lowerBits uint64
 	if lowerBits = 0; universe > n {
 		lowerBits = msb(universe / n)
@@ -44,11 +44,11 @@ func NewEF(universe uint64, n uint64) *EliasFano {
 	lowerBitsOffset := higherBitsLength
 	bvLen := lowerBitsOffset + n*uint64(lowerBits)
 	b := bitset.New(uint(bvLen))
-	return &EliasFano{universe, n, lowerBits, higherBitsLength, mask, lowerBitsOffset, bvLen, b, 0, 0, 0}
+	return &CompressedText{universe, n, lowerBits, higherBitsLength, mask, lowerBitsOffset, bvLen, b, 0, 0, 0}
 }
 
 // Compress a monotone increasing array of positive integers. It sets the position at the beginning.
-func (ef *EliasFano) Compress(elems []uint64) {
+func (ef *CompressedText) Compress(elems []uint64) {
 	last := uint64(0)
 
 	for i, elem := range elems {
@@ -72,7 +72,7 @@ func (ef *EliasFano) Compress(elems []uint64) {
 }
 
 // Next moves the internal iterator to the next position and returns a value or an error.
-func (ef *EliasFano) Next() (uint64, error) {
+func (ef *CompressedText) Next() (uint64, error) {
 	ef.position++
 	if ef.position >= ef.Size() {
 		return 0, errors.New("End reached")
@@ -83,34 +83,34 @@ func (ef *EliasFano) Next() (uint64, error) {
 }
 
 // Position return the current position of the internal iterator.
-func (ef *EliasFano) Position() uint64 {
+func (ef *CompressedText) Position() uint64 {
 	return ef.position
 }
 
 // Reset moves the internal iterator to the beginning.
-func (ef *EliasFano) Reset() {
+func (ef *CompressedText) Reset() {
 	ef.highBitsPos = 0
 	ef.position = 0
 	ef.readCurrentValue()
 }
 
 // Info prints info regarding the EliasFano codec.
-func (ef *EliasFano) Info() {
+func (ef *CompressedText) Info() {
 	log.Printf(efInfo, ef.universe, ef.n, ef.lowerBits, ef.higherBitsLength, ef.mask, ef.lowerBitsOffset, ef.bvLen)
 }
 
 // Value returns the value of the current element.
-func (ef *EliasFano) Value() uint64 {
+func (ef *CompressedText) Value() uint64 {
 	return ef.curValue
 }
 
 // Size returns the number of elements encoded.
-func (ef *EliasFano) Size() uint64 {
+func (ef *CompressedText) Size() uint64 {
 	return ef.n
 }
 
 // Bitsize returns the size of the internal bitvector.
-func (ef *EliasFano) Bitsize() uint64 {
+func (ef *CompressedText) Bitsize() uint64 {
 	return uint64(ef.b.BinaryStorageSize())
 }
 
@@ -121,7 +121,7 @@ func setBits(b *bitset.BitSet, offset uint64, bits uint64, length uint64) {
 	}
 }
 
-func (ef *EliasFano) readCurrentValue() {
+func (ef *CompressedText) readCurrentValue() {
 	pos := uint(ef.highBitsPos)
 	if pos > 0 {
 		pos++
