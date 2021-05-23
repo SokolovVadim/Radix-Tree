@@ -7,7 +7,6 @@ import (
 const indexNotFound = -1
 
 type Csa struct {
-	// text []rune
 	suffixOffsets   []int
 	psi  []int
 	rb   *roaring.Bitmap
@@ -21,35 +20,31 @@ func newCsa(text string) *Csa {
 	csa := new(Csa)
 	csa.suffixOffsets = sa.index
 	csa.len = sa.n
-	// csa.text = sa.text
 	csa.rb = roaring.NewBitmap()
+	csa.psi = csa.naivePsi()
 	return csa
 }
 
-func printContents(this *Csa) () {
+func (csa *Csa)printContents() {
 	println("========== Printing contents ==========")
 	println("Offset:")
-	for i := 0; i < this.len; i++ {
+	for i := 0; i < csa.len; i++ {
 		fmt.Printf("%v ", i)
 	}
-	/*println("\nText:")
-	for _, i := range this.sa. {
-		fmt.Printf("%c ", i)
-	}*/
 	println("\nSuffix array:")
-	for _, i := range this.suffixOffsets {
+	for _, i := range csa.suffixOffsets {
 		fmt.Printf("%v ", i)
 	}
 	println("\nPsi array:")
-	for _, i := range this.psi {
+	for _, i := range csa.psi {
 		fmt.Printf("%v ", i)
 	}
 	println("\nBit vector:")
-	for _, i := range this.bv {
+	for _, i := range csa.bv {
 		fmt.Printf("%v ", i)
 	}
 	println("\nBitmap:")
-	fmt.Println(this.rb.String())
+	fmt.Println(csa.rb.String())
 	println("\n=========== End of printing ===========")
 }
 
@@ -62,7 +57,7 @@ func findIndex(saIndex []int, idx int) int {
 	return indexNotFound
 }
 
-func naivePsi(csa* Csa) []int {
+func (csa* Csa)naivePsi() []int {
 	psiArr := make([]int, csa.len)
 	// assume PSI[0] = '$'
 	psiArr[0] = 0

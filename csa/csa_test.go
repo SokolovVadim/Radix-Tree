@@ -35,19 +35,39 @@ func rank(bv []byte, x int) int {
 }
 
 func BenchmarkCSA(b *testing.B) {
-	println("hello!")
-	// csa := newCsa()
-	input := "abbaabbaaababbb$"
-	/*sa := NewSuffixArrayX(input)
-	csa := newCsaFromSa(sa)
-	csa.psi = naivePsi(csa)
-	createBitVector(csa)
-	efCompress(csa)
-	printContents(csa)*/
+	/*input := "abbaabbaaababbb$"
+
 	csa := newCsa(input)
 	csa.psi = naivePsi(csa)
 	createBitVector(csa)
 	efCompress(csa)
-	printContents(csa)
-	// 
+	printContents(csa)*/
+}
+
+func testEq(first, second []int) bool {
+	// If one is nil, the other must also be nil.
+	if (first == nil) != (second == nil) {
+		return false
+	}
+	if len(first) != len(second) {
+		return false
+	}
+	for i := 0; i < len(first); i++ {
+		if first[i] != second[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func TestCsa(t *testing.T) {
+	input := "abbaabbaaababbb$"
+	psiArray := []int{0, 2, 4, 5, 11, 13, 14, 15, 0, 1, 3, 7, 8, 9, 10, 12}
+	csa := newCsa(input)
+	if !testEq(psiArray, csa.psi) {
+		t.Errorf("psi-array is wrong")
+	}
+	createBitVector(csa)
+	efCompress(csa)
+	csa.printContents()
 }
