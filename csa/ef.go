@@ -2,6 +2,7 @@ package csa
 // https://github.com/amallia/go-ef
 import (
 	"errors"
+	"fmt"
 	"github.com/RoaringBitmap/roaring"
 	"log"
 	"math"
@@ -49,27 +50,42 @@ func NewEF(universe uint64, n uint64) *CompressedText {
 }
 
 // Compress a monotone increasing array of positive integers. It sets the position at the beginning.
-func (ef *CompressedText) Compress(elems []uint64) {
-	last := uint64(0)
+func (ef *CompressedText) Compress(elems []uint32) {
+	last := uint32(0)
 
 	for i, elem := range elems {
 		if i > 0 && elem < last {
 			log.Fatal("Sequence is not sorted")
 		}
-		if elem > ef.universe {
+		if elem > uint32(ef.universe) {
 			log.Fatalf("Element %d is greater than universe", elem)
 		}
-		high := (elem >> ef.lowerBits) + uint64(i) + 1
-		low := elem & ef.mask
+		high := (elem >> ef.lowerBits) + uint32(i) + 1
+		low := elem & uint32(ef.mask)
 		ef.b.Add(uint32(high))
 		offset := ef.lowerBitsOffset + uint64(i)*ef.lowerBits
-		setBits(ef.b, offset, low, ef.lowerBits)
+		setBits(ef.b, offset, uint64(low), ef.lowerBits)
 		last = elem
 		if i == 0 {
-			ef.curValue = elem
-			ef.highBitsPos = high
+			ef.curValue = uint64(elem)
+			ef.highBitsPos = uint64(high)
 		}
 	}
+	fmt.Println(ef.b.String())
+}
+
+func (ef* CompressedText) getVal(k uint32) uint32 {
+	value, _ := ef.b.Select(k)
+	return value - k - 1
+}
+
+func (ef* CompressedText) getMany(length int) []uint32 {
+	arr := make([]uint32, length)
+	for i := 0; i < length; i++ {
+		arr[i], _ = ef.b.Select(uint32(i))
+		arr[i] -= uint32(i) + 1
+	}
+	return arr
 }
 
 // Next moves the internal iterator to the next position and returns a value or an error.
@@ -130,9 +146,10 @@ func setBits(b *roaring.Bitmap, offset uint64, bits uint64, length uint64) {
 	}
 }
 
-func (ef *CompressedText) readCurrentValue() {
+func (ef *CompressedText) readCurrentValue() uint32 {
 	value, _ := ef.b.Select(uint32(ef.highBitsPos))
 	ef.curValue = uint64(value)
+	return value
 	/*pos := uint(ef.highBitsPos)
 	if pos > 0 {
 		pos++

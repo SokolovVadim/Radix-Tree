@@ -44,7 +44,7 @@ func (csa *Csa)printContents() {
 		fmt.Printf("%v ", i)
 	}
 	println("\nBitmap:")
-	fmt.Println(csa.rb.String())
+	fmt.Println(csa.ef.b.String())
 	println("\n=========== End of printing ===========")
 }
 
@@ -83,8 +83,17 @@ func (csa* Csa) createBitVector() {
 	// csa.rb.AddMany(bv)
 }
 
+func transform(arr []int) []uint32 {
+	newArr := make([]uint32, len(arr) / 2)
+	for i := range newArr {
+		newArr[i] = uint32(arr[i])
+	}
+	return newArr
+}
+
 func (csa* Csa)efCompress() {
 	// create an Elias-Fano sequence with maximum element from psi
-	csa.ef = NewEF(uint64(csa.psi[csa.len-1]), uint64(csa.len))
-	csa.ef.Compress(csa.psi)
+	csa.ef = NewEF(uint64(len(csa.psi)), uint64(len(csa.psi)))
+	//transformed := transform(csa.psi)
+	csa.ef.Compress(transform(csa.psi))
 }

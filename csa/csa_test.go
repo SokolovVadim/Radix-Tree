@@ -1,6 +1,7 @@
 package csa
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -32,8 +33,8 @@ func testEq(first, second []int) bool {
 
 func TestCsa(t *testing.T) {
 	input := "abbaabbaaababbb$"
-	psiArray    := []int{0, 2, 4, 5, 11, 13, 14, 15, 0, 1, 3, 7, 8, 9, 10, 12}
 	suffixArray := []int{15, 7, 8, 3, 9, 4, 0, 11, 14, 6, 2, 10, 13, 5, 1, 12}
+	psiArray    := []int{0, 2, 4, 5, 11, 13, 14, 15, 0, 1, 3, 7, 8, 9, 10, 12}
 	bitVector   := []int{1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0}
 	csa := newCsa(input)
 	if !testEq(psiArray, csa.psi) {
@@ -47,5 +48,6 @@ func TestCsa(t *testing.T) {
 		t.Errorf("bit vector is wrong")
 	}
 	csa.efCompress()
+	fmt.Println(csa.ef.getMany(len(csa.psi) / 2))
 	csa.printContents()
 }
