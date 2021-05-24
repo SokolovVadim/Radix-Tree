@@ -2,14 +2,16 @@ package csa
 
 import (
 	"fmt"
-	"github.com/RoaringBitmap/roaring"
 )
-const indexNotFound = -1
+
+const (
+	indexNotFound = -1
+	alphabetLength = 2
+)
 
 type Csa struct {
 	suffixOffsets   []int
-	psi  []int
-	rb   *roaring.Bitmap
+	psi  []uint32
 	bv   []int
 	ef   *CompressedText
 	len int
@@ -20,7 +22,6 @@ func newCsa(text string) *Csa {
 	csa := new(Csa)
 	csa.suffixOffsets = sa.index
 	csa.len = sa.n
-	csa.rb = roaring.NewBitmap()
 	csa.psi = csa.naivePsi()
 	return csa
 }
@@ -57,12 +58,12 @@ func findIndex(saIndex []int, idx int) int {
 	return indexNotFound
 }
 
-func (csa* Csa)naivePsi() []int {
-	psiArr := make([]int, csa.len)
+func (csa* Csa)naivePsi() []uint32 {
+	psiArr := make([]uint32, csa.len)
 	// assume PSI[0] = '$'
 	psiArr[0] = 0
 	for i := 1; i < csa.len; i++ {
-		psiArr[i] = findIndex(csa.suffixOffsets, csa.suffixOffsets[i] + 1)
+		psiArr[i] = uint32(findIndex(csa.suffixOffsets, csa.suffixOffsets[i] + 1))
 	}
 	csa.psi = psiArr
 	return psiArr
@@ -76,24 +77,14 @@ func (csa* Csa) createBitVector() {
 		bv[i] = 0
 	}
 	for i := 0; i < csa.len; i++ {
-		fmt.Println("i = ", i, ", psi[i] = ", csa.psi[i], ", i + psi[i] = ", i + csa.psi[i])
-		bv[i + csa.psi[i]] = 1
+		// fmt.Println("i = ", i, ", psi[i] = ", csa.psi[i], ", i + psi[i] = ", i + int(csa.psi[i]))
+		bv[i + int(csa.psi[i])] = 1
 	}
 	csa.bv = bv
-	// csa.rb.AddMany(bv)
-}
-
-func transform(arr []int) []uint32 {
-	newArr := make([]uint32, len(arr) / 2)
-	for i := range newArr {
-		newArr[i] = uint32(arr[i])
-	}
-	return newArr
 }
 
 func (csa* Csa)efCompress() {
 	// create an Elias-Fano sequence with maximum element from psi
 	csa.ef = NewEF(uint64(len(csa.psi)), uint64(len(csa.psi)))
-	//transformed := transform(csa.psi)
-	csa.ef.Compress(transform(csa.psi))
+	csa.ef.Compress(csa.psi[:len(csa.psi) / alphabetLength])
 }
