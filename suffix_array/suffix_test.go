@@ -2,34 +2,24 @@ package suffix_array
 
 import (
 	"index/suffixarray"
-	"math/rand"
+	"io/ioutil"
+	"log"
 	"testing"
-	"time"
 )
 
 const (
-	length   = 65536
 	leftPos  = 10200
 	rightPos = 10450
 )
 
-func initSeed() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-func generateTestString(size int) string {
-	b := make([]byte, size)
-	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
-	}
-	return string(b)
-}
-
 func BenchmarkFindAllIndex(b *testing.B) {
-	initSeed()
-	testStr := generateTestString(length)
+	content, err := ioutil.ReadFile("C:\\Users\\Vadim\\GolandProjects\\Radix-Tree\\utils\\data.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convert []byte to string
+	testStr := string(content)
 	sa := suffixarray.New([]byte(testStr))
 
 	b.ResetTimer()
