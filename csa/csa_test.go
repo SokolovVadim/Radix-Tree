@@ -1,7 +1,6 @@
 package csa
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 )
@@ -29,15 +28,15 @@ func TestCsa(t *testing.T) {
 	if !reflect.DeepEqual(psiArray, csa.psi) {
 		t.Errorf("psi-array is wrong")
 	}
-	// csa.efCompress()
+	csa.efCompress()
 /*	if bitString != csa.ef.b.String() {
 		t.Errorf("bit map is wrong")
 	}*/
 /*	if !reflect.DeepEqual(csa.ef.getMany(len(csa.psi) / alphabetLength), psiArray[:len(csa.psi) / alphabetLength]) {
 		t.Errorf("converted psi-array is wrong")
 	}*/
-	fmt.Println(csa.psi)
+/*	fmt.Println(csa.psi)
 	x := csa.getSaFromPsi(13, csa.psi)
-	fmt.Println(x)
+	fmt.Println(x)*/
 	// csa.printContents()
 }

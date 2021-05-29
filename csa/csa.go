@@ -14,6 +14,7 @@ type Csa struct {
 	suffixOffsets   []int
 	psi  []uint32
 	ef   *CompressedText
+	bv   []*CompressedText
 	length int
 }
 
@@ -68,8 +69,38 @@ func (csa* Csa)naivePsi() []uint32 {
 
 func (csa* Csa)efCompress() {
 	// create an Elias-Fano sequence with maximum element from psi
-	csa.ef = NewEF(uint64(len(csa.psi)), uint64(len(csa.psi)))
-	csa.ef.Compress(csa.psi[(len(csa.psi) / alphabetLength):])
+	// csa.ef = NewEF(uint64(len(csa.psi)), uint64(len(csa.psi)))
+	seqLen := make([]int, alphabetLength - 1)
+	csa.bv = make([]*CompressedText, alphabetLength)
+	j := 0
+	for i := 1; i < csa.length - 1; i++ {
+		if csa.psi[i] > csa.psi[i + 1] {
+			seqLen[j] = i
+			println(i)
+			if j > 0 {
+				fmt.Println("here")
+				curLen := uint64(seqLen[j] - seqLen[j - 1])
+				csa.bv[j] = NewEF(uint64(i), curLen)
+				csa.bv[j].Compress(csa.psi[seqLen[j - 1] + 1:i])
+			} else {
+				curLen := uint64(i)
+				csa.bv[j] = NewEF(uint64(csa.length), curLen)
+				csa.bv[j].Compress(csa.psi[1:curLen])
+			}
+			j++
+		}
+	}
+	// seqLen[alphabetLength - 1] = csa.length - seqLen[alphabetLength - 2]
+	for i := range seqLen {
+		fmt.Println(seqLen[i])
+	}
+
+/*	for i := range seqLen {
+		csa.bv[i] = NewEF(uint64(seqLen[i]), uint64(seqLen[i]))
+		csa.bv[i].Compress(csa.psi[1:csa.length / 2])
+	}*/
+
+	// csa.ef.Compress(csa.psi[1:csa.length / 2])
 }
 
 func (csa* Csa)getSaFromPsi(x int, psi []uint32) int{
