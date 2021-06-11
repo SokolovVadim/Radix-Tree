@@ -51,6 +51,7 @@ func NewEF(universe uint64, n uint64) *CompressedText {
 
 // Compress a monotone increasing array of positive integers. It sets the position at the beginning.
 func (ef *CompressedText) Compress(elems []uint32) {
+	fmt.Println("compressible:", elems)
 	last := uint32(0)
 
 	for i, elem := range elems {
@@ -71,7 +72,7 @@ func (ef *CompressedText) Compress(elems []uint32) {
 			ef.highBitsPos = uint64(high)
 		}
 	}
-	fmt.Println(ef.b.String())
+	fmt.Println("decode after compressing: ", ef.b.String())
 }
 
 func (ef* CompressedText) getVal(k uint32) uint32 {

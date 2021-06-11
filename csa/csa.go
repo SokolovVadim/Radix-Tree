@@ -6,7 +6,7 @@ import (
 
 const (
 	indexNotFound = -1
-	alphabetLength = 2
+	alphabetLength = 3
 	EofMarker = 1000
 )
 
@@ -15,6 +15,8 @@ type Csa struct {
 	psi  []uint32
 	ef   *CompressedText
 	bv   []*CompressedText
+	seqOffset []int
+	seqLen []int
 	length int
 }
 
@@ -41,8 +43,10 @@ func (csa *Csa)printContents() {
 	for _, i := range csa.psi {
 		fmt.Printf("%v ", i)
 	}
-	println("\nBitmap:")
-	fmt.Println(csa.ef.b.String())
+	if csa.ef != nil {
+		println("\nBitmap:")
+		fmt.Println(csa.ef.b.String())
+	}
 	println("\n=========== End of printing ===========")
 }
 
@@ -67,40 +71,56 @@ func (csa* Csa)naivePsi() []uint32 {
 	return psiArr
 }
 
+func (csa* Csa)efCompressOne() {
+	array := []uint32{0, 2, 3, 8, 11, 13, 14, 16, 17}
+	size := uint64(len(array))
+	max := uint64(array[size-1])
+	ef := NewEF(max, size)
+	ef.Compress(array)
+	fmt.Println(ef.getMany(int(size)))
+}
+
 func (csa* Csa)efCompress() {
 	// create an Elias-Fano sequence with maximum element from psi
 	// csa.ef = NewEF(uint64(len(csa.psi)), uint64(len(csa.psi)))
-	seqLen := make([]int, alphabetLength - 1)
+	// create an array for storing lengths of sequences
+	csa.seqLen = make([]int, alphabetLength)
+	csa.seqOffset = make([]int, alphabetLength)
 	csa.bv = make([]*CompressedText, alphabetLength)
 	j := 0
 	for i := 1; i < csa.length - 1; i++ {
-		if csa.psi[i] > csa.psi[i + 1] {
-			seqLen[j] = i
-			println(i)
-			if j > 0 {
-				fmt.Println("here")
-				curLen := uint64(seqLen[j] - seqLen[j - 1])
-				csa.bv[j] = NewEF(uint64(i), curLen)
-				csa.bv[j].Compress(csa.psi[seqLen[j - 1] + 1:i])
-			} else {
-				curLen := uint64(i)
+		// check the start of each new ascending sequence
+		// to be compressed
+		if csa.psi[i + 1] < csa.psi[i] {
+			// the first entry
+			if j == 0 {
+				csa.seqOffset[j] = 1
+				csa.seqOffset[j + 1] = i + 1
+				curLen := uint64(i + 1)
+				csa.seqLen[j] = i
 				csa.bv[j] = NewEF(uint64(csa.length), curLen)
 				csa.bv[j].Compress(csa.psi[1:curLen])
+				fmt.Println("initial bitmap:", csa.bv[j].b.String())
+			} else {
+				if j < alphabetLength - 1 {
+					csa.seqOffset[j + 1] = i + 1
+				}
+				curLen := uint64(i - csa.seqOffset[j])
+				csa.seqLen[j] = i + 1 - csa.seqOffset[j]
+				csa.bv[j] = NewEF(uint64(csa.length), curLen)
+				csa.bv[j].Compress(csa.psi[csa.seqOffset[j]:i + 1])
 			}
 			j++
 		}
 	}
-	// seqLen[alphabetLength - 1] = csa.length - seqLen[alphabetLength - 2]
-	for i := range seqLen {
-		fmt.Println(seqLen[i])
-	}
-
-/*	for i := range seqLen {
-		csa.bv[i] = NewEF(uint64(seqLen[i]), uint64(seqLen[i]))
-		csa.bv[i].Compress(csa.psi[1:csa.length / 2])
-	}*/
-
-	// csa.ef.Compress(csa.psi[1:csa.length / 2])
+	j = alphabetLength - 1
+	csa.seqLen[j] = csa.length - csa.seqOffset[j]
+	csa.bv[j] = NewEF(uint64(csa.length), uint64(csa.seqLen[j]))
+	csa.bv[j].Compress(csa.psi[csa.seqOffset[j]:])
+	fmt.Println("SeqLen:", csa.seqLen)
+	fmt.Println("SeqOffset:", csa.seqOffset)
+	psi := csa.bv[0].getMany(csa.seqLen[0])
+	fmt.Println("decoded:", psi)
 }
 
 func (csa* Csa)getSaFromPsi(x int, psi []uint32) int{
