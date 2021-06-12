@@ -97,7 +97,6 @@ func (ef *CompressedText) Next() (uint64, error) {
 	}
 	ef.readCurrentValue()
 	return ef.Value(), nil
-
 }
 
 // Position return the current position of the internal iterator.
