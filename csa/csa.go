@@ -147,21 +147,15 @@ func (csa* Csa)getSaFromPsi(x int, psi []uint32) int{
 }
 
 func (csa* Csa)getPsiFromBv(x uint32) uint32 {
-	// var bv *CompressedText
-	// fmt.Println("x:", x)
 	idx := 0
 	// iterate over bitmaps and find appropriate
 	for i := 0; i < alphabetLength - 1; i++ {
-		// fmt.Println("seqOffset:", csa.seqOffset[i])
 		if int(x) >= csa.seqOffset[i] && int(x) < csa.seqOffset[i + 1] {
-			// bv = csa.bv[i]
 			idx = i
-			// fmt.Println("idx chosen:", idx)
 			break
 		}
 	}
 	if int(x) >= csa.seqOffset[alphabetLength - 1] && int(x) < csa.length {
-		//bv = csa.bv[alphabetLength - 1]
 		idx = alphabetLength - 1
 	}
 	return csa.bv[idx].getVal(x - uint32(csa.seqOffset[idx]))
@@ -170,15 +164,6 @@ func (csa* Csa)getPsiFromBv(x uint32) uint32 {
 func (csa* Csa)getSaFromBitmap(x int, c byte) int {
 	hopsToEnd := 0
 	initialX := x
-	//psi0 := EofMarker//csa.bv[0].getVal(0)
-	/*var bv *CompressedText
-	for i := 0; i < alphabetLength; i++ {
-		if csa.seqChar[i] == c {
-			bv = csa.bv[i]
-			fmt.Println("bitmap number chosen:", i)
-			break
-		}
-	}*/
 	i := 0
 	for {
 		psiX := csa.getPsiFromBv(uint32(x))// bv.getVal(uint32(x))

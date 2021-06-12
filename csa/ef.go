@@ -60,16 +60,6 @@ func (ef *CompressedText) Compress(elems []uint64) {
 		if elem > ef.universe {
 			log.Fatalf("Element %d is greater than universe", elem)
 		}
-		/*high := (elem >> ef.lowerBits) + uint64(i) + 1
-		low := elem & ef.mask
-		ef.b.Add(uint32(high))
-		offset := ef.lowerBitsOffset + uint64(i)*ef.lowerBits
-		setBits(ef.b, offset, low, ef.lowerBits)
-		last = elem
-		if i == 0 {
-			ef.curValue = elem
-			ef.highBitsPos = high
-		}*/
 		ef.b.Add(uint32(elem) + uint32(i) + 1)
 	}
 	fmt.Println("decode after compressing: ", ef.b.String())
@@ -150,28 +140,6 @@ func (ef *CompressedText) readCurrentValue() uint32 {
 	value, _ := ef.b.Select(uint32(ef.highBitsPos))
 	ef.curValue = uint64(value)
 	return value
-	/*pos := uint(ef.highBitsPos)
-	if pos > 0 {
-		pos++
-	}
-    // ??????????
-	// pos, _ = ef.b.NextSet(pos)
-	i := ef.b.Iterator()
-	if i.HasNext() {
-		pos = ef.b.
-	}
-	i.Next()
-	ef.highBitsPos = uint64(pos)
-	low := uint64(0)
-	offset := ef.lowerBitsOffset + ef.position*ef.lowerBits
-	for i := uint64(0); i < ef.lowerBits; i++ {
-		if ef.b.Contains(uint32(offset + i + 1)) {
-			low++
-		}
-		low = low << 1
-	}
-	low = low >> 1
-	ef.curValue = uint64(((ef.highBitsPos - ef.position - 1) << ef.lowerBits) | low)*/
 }
 
 func round(a float64) int64 {
