@@ -29,7 +29,6 @@ type CompressedText struct {
 	lowerBitsOffset  uint64
 	bvLen            uint64
 	b                *roaring.Bitmap
-	// bv *roaring.Bitmap
 	curValue         uint64
 	position         uint64
 	highBitsPos      uint64
@@ -50,27 +49,28 @@ func NewEF(universe uint64, n uint64) *CompressedText {
 }
 
 // Compress a monotone increasing array of positive integers. It sets the position at the beginning.
-func (ef *CompressedText) Compress(elems []uint32) {
+func (ef *CompressedText) Compress(elems []uint64) {
 	fmt.Println("compressible:", elems)
-	last := uint32(0)
+	last := uint64(0)
 
 	for i, elem := range elems {
 		if i > 0 && elem < last {
 			log.Fatal("Sequence is not sorted")
 		}
-		if elem > uint32(ef.universe) {
+		if elem > ef.universe {
 			log.Fatalf("Element %d is greater than universe", elem)
 		}
-		high := (elem >> ef.lowerBits) + uint32(i) + 1
-		low := elem & uint32(ef.mask)
+		/*high := (elem >> ef.lowerBits) + uint64(i) + 1
+		low := elem & ef.mask
 		ef.b.Add(uint32(high))
 		offset := ef.lowerBitsOffset + uint64(i)*ef.lowerBits
-		setBits(ef.b, offset, uint64(low), ef.lowerBits)
+		setBits(ef.b, offset, low, ef.lowerBits)
 		last = elem
 		if i == 0 {
-			ef.curValue = uint64(elem)
-			ef.highBitsPos = uint64(high)
-		}
+			ef.curValue = elem
+			ef.highBitsPos = high
+		}*/
+		ef.b.Add(uint32(elem) + uint32(i) + 1)
 	}
 	fmt.Println("decode after compressing: ", ef.b.String())
 }

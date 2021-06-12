@@ -72,9 +72,9 @@ func (csa* Csa)naivePsi() []uint32 {
 }
 
 func (csa* Csa)efCompressOne() {
-	array := []uint32{0, 2, 3, 8, 11, 13, 14, 16, 17}
+	array := []uint64{0, 2, 3, 8, 11, 13, 14, 16, 29}
 	size := uint64(len(array))
-	max := uint64(array[size-1])
+	max := array[size-1]
 	ef := NewEF(max, size)
 	ef.Compress(array)
 	fmt.Println(ef.getMany(int(size)))
@@ -99,7 +99,7 @@ func (csa* Csa)efCompress() {
 				curLen := uint64(i + 1)
 				csa.seqLen[j] = i
 				csa.bv[j] = NewEF(uint64(csa.length), curLen)
-				csa.bv[j].Compress(csa.psi[1:curLen])
+				// csa.bv[j].Compress(csa.psi[1:curLen])
 				fmt.Println("initial bitmap:", csa.bv[j].b.String())
 			} else {
 				if j < alphabetLength - 1 {
@@ -108,7 +108,7 @@ func (csa* Csa)efCompress() {
 				curLen := uint64(i - csa.seqOffset[j])
 				csa.seqLen[j] = i + 1 - csa.seqOffset[j]
 				csa.bv[j] = NewEF(uint64(csa.length), curLen)
-				csa.bv[j].Compress(csa.psi[csa.seqOffset[j]:i + 1])
+				// csa.bv[j].Compress(csa.psi[csa.seqOffset[j]:i + 1])
 			}
 			j++
 		}
@@ -116,7 +116,7 @@ func (csa* Csa)efCompress() {
 	j = alphabetLength - 1
 	csa.seqLen[j] = csa.length - csa.seqOffset[j]
 	csa.bv[j] = NewEF(uint64(csa.length), uint64(csa.seqLen[j]))
-	csa.bv[j].Compress(csa.psi[csa.seqOffset[j]:])
+	// csa.bv[j].Compress(csa.psi[csa.seqOffset[j]:])
 	fmt.Println("SeqLen:", csa.seqLen)
 	fmt.Println("SeqOffset:", csa.seqOffset)
 	psi := csa.bv[0].getMany(csa.seqLen[0])
