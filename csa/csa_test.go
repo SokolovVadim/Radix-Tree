@@ -2,13 +2,26 @@ package csa
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"runtime"
 	"testing"
-	"github.com/pkg/profile"
 )
 
 func BenchmarkCSA(b *testing.B) {
+	content, err := ioutil.ReadFile("C:\\Users\\Vadim\\GolandProjects\\Radix-Tree\\utils\\data.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	testStr := string(content)
 
+	csa := newCsa(testStr)
+	csa.efCompress()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		csa.lookup(testStr[leftPos: rightPos])
+	}
 }
 
 // PrintMemUsage outputs the current, total and OS memory being used. As well as the number
@@ -34,7 +47,7 @@ func bToKb(b uint64) uint64 {
 
 func TestCsa(t *testing.T) {
 	// PrintMemUsage()
-	defer profile.Start(profile.MemProfile, profile.MemProfileRate(1)).Stop()
+	// defer profile.Start(profile.MemProfile, profile.MemProfileRate(1)).Stop()
 	input := "adbbaabcbdaaccaaabcdabaabcabbacbadbdbabcdbcbc$"
 	csa := newCsa(input)
 	// csa.printContents()
@@ -43,7 +56,6 @@ func TestCsa(t *testing.T) {
 	// PrintMemUsage()
 	// fmt.Println("Lookup:")
 	csa.lookup("dbdba")
-	// csa.lookupPsi("dbdba")
 	// PrintMemUsage()
 
 	// Force GC to clear up, should see a memory drop

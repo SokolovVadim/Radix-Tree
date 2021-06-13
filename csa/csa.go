@@ -7,6 +7,8 @@ import (
 const (
 	indexNotFound = -1
 	EofMarker = 1000
+	leftPos  = 10200
+	rightPos = 10450
 )
 
 type Csa struct {
