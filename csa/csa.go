@@ -6,7 +6,6 @@ import (
 
 const (
 	indexNotFound = -1
-	alphabetLength = 3
 	EofMarker = 1000
 )
 
@@ -14,12 +13,12 @@ type Csa struct {
 	text string
 	suffixOffsets   []int
 	psi  []uint64
-	ef   *CompressedText
 	bv   []*CompressedText
 	seqOffset []int
 	seqLen []int
 	seqChar[]byte
 	length int
+	alphabetLength int
 }
 
 func newCsa(text string) *Csa {
@@ -29,6 +28,7 @@ func newCsa(text string) *Csa {
 	csa.suffixOffsets = sa.index
 	csa.length = sa.n
 	csa.psi = csa.naivePsi()
+	csa.alphabetLength = csa.estimateAlphabetLen()
 	return csa
 }
 
@@ -47,10 +47,6 @@ func (csa *Csa)printContents() {
 	println("\nPsi array:")
 	for _, i := range csa.psi {
 		fmt.Printf("%v ", i)
-	}
-	if csa.ef != nil {
-		println("\nBitmap:")
-		fmt.Println(csa.ef.b.String())
 	}
 	println("\n=========== End of printing ===========")
 }
@@ -85,12 +81,13 @@ func (csa* Csa)efCompressOne() {
 	fmt.Println(ef.getMany(int(size)))
 }
 
+// Suffix use O(n * log(|SIGMA|))
 func (csa* Csa)efCompress() {
 	// create an array for storing lengths of sequences
-	csa.seqLen = make([]int, alphabetLength)
-	csa.seqOffset = make([]int, alphabetLength)
-	csa.bv = make([]*CompressedText, alphabetLength)
-	csa.seqChar = make([]byte, alphabetLength)
+	csa.seqLen = make([]int, csa.alphabetLength)
+	csa.seqOffset = make([]int, csa.alphabetLength)
+	csa.bv = make([]*CompressedText, csa.alphabetLength)
+	csa.seqChar = make([]byte, csa.alphabetLength)
 	j := 0
 	for i := 1; i < csa.length - 1; i++ {
 		// check the start of each new ascending sequence
@@ -107,9 +104,9 @@ func (csa* Csa)efCompress() {
 				csa.bv[j].Compress(csa.psi[1:curLen])
 				// fmt.Println("initial bitmap:", csa.bv[j].b.String())
 			} else {
-				if j < alphabetLength - 1 {
+				if j < csa.alphabetLength - 1 {
 					csa.seqOffset[j + 1] = i + 1
-					csa.seqChar[j + 1] = csa.text[csa.psi[i]]
+					csa.seqChar[j + 1] = csa.text[csa.suffixOffsets[i]]
 				}
 				csa.seqChar[j] = csa.text[csa.suffixOffsets[i]]
 				curLen := uint64(i - csa.seqOffset[j])
@@ -120,15 +117,20 @@ func (csa* Csa)efCompress() {
 			j++
 		}
 	}
-	j = alphabetLength - 1
+	j = csa.alphabetLength - 1
 	csa.seqLen[j] = csa.length - csa.seqOffset[j]
+	csa.seqChar[j] = csa.text[csa.suffixOffsets[csa.length - 1]]
 	csa.bv[j] = NewEF(uint64(csa.length), uint64(csa.seqLen[j]))
 	csa.bv[j].Compress(csa.psi[csa.seqOffset[j]:])
-	fmt.Println("SeqLen:", csa.seqLen)
-	fmt.Println("SeqOffset:", csa.seqOffset)
-	fmt.Println("SeqChar:", string(csa.seqChar))
-	psi := csa.bv[0].getMany(csa.seqLen[0])
-	fmt.Println("decoded:", psi)
+
+	// Throw away suffix offsets and psi array
+	csa.suffixOffsets = nil
+	csa.psi = nil
+	// fmt.Println("SeqLen:", csa.seqLen)
+	// fmt.Println("SeqOffset:", csa.seqOffset)
+	// fmt.Println("SeqChar:", string(csa.seqChar))
+	// psi := csa.bv[0].getMany(csa.seqLen[0])
+	// fmt.Println("decoded:", psi)
 }
 
 func (csa* Csa)getSaFromPsi(x int, psi []uint32) int{
@@ -149,19 +151,19 @@ func (csa* Csa)getSaFromPsi(x int, psi []uint32) int{
 func (csa* Csa)getPsiFromBv(x uint32) uint32 {
 	idx := 0
 	// iterate over bitmaps and find appropriate
-	for i := 0; i < alphabetLength - 1; i++ {
+	for i := 0; i < csa.alphabetLength - 1; i++ {
 		if int(x) >= csa.seqOffset[i] && int(x) < csa.seqOffset[i + 1] {
 			idx = i
 			break
 		}
 	}
-	if int(x) >= csa.seqOffset[alphabetLength - 1] && int(x) < csa.length {
-		idx = alphabetLength - 1
+	if int(x) >= csa.seqOffset[csa.alphabetLength - 1] && int(x) < csa.length {
+		idx = csa.alphabetLength - 1
 	}
 	return csa.bv[idx].getVal(x - uint32(csa.seqOffset[idx]))
 }
 
-func (csa* Csa)getSaFromBitmap(x int, c byte) int {
+func (csa* Csa)getSaFromBitmap(x int) int {
 	hopsToEnd := 0
 	initialX := x
 	i := 0
@@ -181,7 +183,9 @@ func (csa* Csa)getSaFromBitmap(x int, c byte) int {
 	return csa.length - hopsToEnd - 2
 }
 
-func (csa* Csa)Lookup(str string) {
+// Complexity: O((log(n))^2)
+
+func (csa* Csa)lookup(str string) {
 	l := 0
 	r := csa.length - 1
 	m := len(str)
@@ -189,12 +193,15 @@ func (csa* Csa)Lookup(str string) {
 	for {
 		if l <= r {
 			mid := l + (r - l) / 2
-
-			index = csa.getSaFromBitmap(mid, str[0])
-			if str == csa.text[index:index + m] {
+			index = csa.getSaFromBitmap(mid)
+			rightBound := index + m
+			if index + m > csa.length - 1 {
+				rightBound = csa.length - 1
+			}
+			if str == csa.text[index:rightBound ] {
 				fmt.Println("pattern found at index", index)
 			}
-			if str < csa.text[index:index + m] {
+			if str < csa.text[index:rightBound] {
 				r = mid - 1
 			} else {
 				l = mid + 1
@@ -204,3 +211,47 @@ func (csa* Csa)Lookup(str string) {
 		}
 	}
 }
+
+func (csa* Csa)estimateAlphabetLen() int {
+	alphLen := 1
+	for i := 1; i < csa.length - 1; i++ {
+		if csa.psi[i+1] < csa.psi[i] {
+			alphLen++
+		}
+	}
+	return alphLen
+}
+
+func (csa* Csa)lookupPsi(str string) {
+	c := str[0]
+	strLen := len(str)
+	bvIdx := 0
+	for i := 0; i < csa.alphabetLength; i++ {
+		fmt.Println(string(csa.seqChar[i]))
+		if c == csa.seqChar[i] {
+			// fmt.Println("here!")
+			bvIdx = i
+		}
+	}
+	// fmt.Println("bvIdx:", bvIdx)
+	// fmt.Println("csa.seqLen[bvIdx]:", csa.seqLen[bvIdx])
+	for i := 0; i < csa.seqLen[bvIdx]; i++ {
+		idx := csa.bv[bvIdx].getVal(uint32(i))
+		if csa.text[idx:csa.seqOffset[idx] + strLen] == str {
+			fmt.Println("Pattern found at idx:", idx)
+		}
+	}
+}
+
+/*// find all occurrences of substring
+func (csa* Csa)findAll(str string) {
+	for i := 0; i < csa.length; i++ {
+
+	}
+}
+
+// count occurrences of substring
+
+func (csa* Csa)countAll(str string) {
+
+}*/
