@@ -2,7 +2,6 @@ package csa
 // https://github.com/amallia/go-ef
 import (
 	"errors"
-	"fmt"
 	"github.com/RoaringBitmap/roaring"
 	"log"
 	"math"
@@ -50,7 +49,7 @@ func NewEF(universe uint64, n uint64) *CompressedText {
 
 // Compress a monotone increasing array of positive integers. It sets the position at the beginning.
 func (ef *CompressedText) Compress(elems []uint64) {
-	fmt.Println("compressible:", elems)
+	// fmt.Println("compressible:", elems)
 	last := uint64(0)
 
 	for i, elem := range elems {
@@ -62,7 +61,7 @@ func (ef *CompressedText) Compress(elems []uint64) {
 		}
 		ef.b.Add(uint32(elem) + uint32(i) + 1)
 	}
-	fmt.Println("decode after compressing: ", ef.b.String())
+	// fmt.Println("decode after compressing: ", ef.b.String())
 }
 
 func (ef* CompressedText) getVal(k uint32) uint32 {
