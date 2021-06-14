@@ -24,9 +24,9 @@ func BenchmarkCSA(b *testing.B) {
 	PrintMemUsage()
 
 	b.ResetTimer()
-/*	for i := 0; i < b.N; i++ {
-		csa.lookup(testStr[leftPos: rightPos])
-	}*/
+    //	for i := 0; i < b.N; i++ {
+	//	csa.lookup(testStr[leftPos: rightPos])
+	// }
 	csa.lookup(testStr[leftPos: rightPos])
 	PrintMemUsage()
 
@@ -56,7 +56,7 @@ func bToKb(b uint64) uint64 {
 	return b / 1024
 }
 
-func TestCsa(t *testing.T) {
+/*func TestCsa(t *testing.T) {
 	// PrintMemUsage()
 	// defer profile.Start(profile.MemProfile, profile.MemProfileRate(1)).Stop()
 	input := "adbbaabcbdaaccaaabcdabaabcabbacbadbdbabcdbcbc$"
@@ -72,4 +72,4 @@ func TestCsa(t *testing.T) {
 	// Force GC to clear up, should see a memory drop
 	// runtime.GC()
 	// PrintMemUsage()
-}
+}*/
