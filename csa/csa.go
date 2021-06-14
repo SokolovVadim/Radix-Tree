@@ -6,9 +6,9 @@ import (
 
 const (
 	indexNotFound = -1
-	EofMarker = 1000
-	leftPos  = 10200
-	rightPos = 10450
+	EofMarker = 100000
+	leftPos  = 1020
+	rightPos = 1045
 )
 
 type Csa struct {
@@ -59,7 +59,9 @@ func findIndex(saIndex []int, idx int) int {
 			return i
 		}
 	}
-	return indexNotFound
+	// fmt.Println("index", idx, "not found!")
+	// return indexNotFound
+	return 0
 }
 
 func (csa* Csa)naivePsi() []uint64 {
@@ -112,6 +114,9 @@ func (csa* Csa)efCompress() {
 				}
 				csa.seqChar[j] = csa.text[csa.suffixOffsets[i]]
 				curLen := uint64(i - csa.seqOffset[j])
+				if curLen == 0 {
+					curLen = 1
+				}
 				csa.seqLen[j] = i + 1 - csa.seqOffset[j]
 				csa.bv[j] = NewEF(uint64(csa.length), curLen)
 				csa.bv[j].Compress(csa.psi[csa.seqOffset[j]:i + 1])

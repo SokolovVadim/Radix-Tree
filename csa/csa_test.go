@@ -9,6 +9,7 @@ import (
 )
 
 func BenchmarkCSA(b *testing.B) {
+	PrintMemUsage()
 	content, err := ioutil.ReadFile("C:\\Users\\Vadim\\GolandProjects\\Radix-Tree\\utils\\data.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -16,12 +17,22 @@ func BenchmarkCSA(b *testing.B) {
 	testStr := string(content)
 
 	csa := newCsa(testStr)
+	fmt.Println("csa len:", csa.length)
+	// fmt.Println("sa:", csa.suffixOffsets)
 	csa.efCompress()
+	runtime.GC()
+	PrintMemUsage()
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+/*	for i := 0; i < b.N; i++ {
 		csa.lookup(testStr[leftPos: rightPos])
-	}
+	}*/
+	csa.lookup(testStr[leftPos: rightPos])
+	PrintMemUsage()
+
+	// Force GC to clear up, should see a memory drop
+	runtime.GC()
+	PrintMemUsage()
 }
 
 // PrintMemUsage outputs the current, total and OS memory being used. As well as the number
