@@ -83,6 +83,8 @@ func TestParseJson(t *testing.T) {
 	if err != nil {
 		t.Errorf("ParseJson failed! Error: %v", err)
 	}
+	// add EOF
+	text += "$"
 	err = writeToFile(text[:max_size])
 	if err != nil {
 		t.Errorf("writeToFile failed! Error: %v", err)
