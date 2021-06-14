@@ -10,7 +10,7 @@ import (
 	"unicode"
 )
 
-const max_size = 9000000
+const max_size = 2000
 
 func parseJson(filename string) (string, error) {
 	jsonFile, err := os.Open(filename)
