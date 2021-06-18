@@ -14,8 +14,8 @@ plt.ylabel('Heap allocation, kByte', fontsize=12)
 
 """ ax.plot(csa_len, csa_mem, marker = 'o', c = 'r', label = 'CSA')
 ax.plot(sa_len, sa_mem, marker = 'o', c = 'b', label = 'SA') """
-ax.plot(csa_len, csa_mem, c = 'r', label = 'CSA')
-ax.plot(sa_len, sa_mem, c = 'b', label = 'SA')
+ax.scatter(csa_len, csa_mem, c = 'r', label = 'CSA')
+ax.scatter(sa_len, sa_mem, c = 'b', label = 'SA')
 
 ax.legend(loc ="upper left")
 """ fig.savefig('csa_sa_marker_o.jpg') """
