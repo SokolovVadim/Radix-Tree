@@ -1,0 +1,3 @@
+len, kB:         489
+lookup time, ns: 50678
+memory, kB:      1760

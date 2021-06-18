@@ -1,0 +1,4 @@
+977
+Alloc = 183 kB  TotalAlloc = 240 kB     Sys = 7187 kB   NumGC = 2
+csa len: 1000000
+Alloc = 149 kB  TotalAlloc = 28211 kB   Sys = 34219 kB  NumGC = 6
