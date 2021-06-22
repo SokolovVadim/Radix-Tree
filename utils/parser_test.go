@@ -81,6 +81,7 @@ func preprocessData(text string) string {
 }
 
 /*func TestParseJson(t *testing.T) {
+=======
 	text, err := parseJson("C:\\Users\\Vadim\\GolandProjects\\Gift_Cards\\Gift_Cards.json")
 	if err != nil {
 		t.Errorf("ParseJson failed! Error: %v", err)
