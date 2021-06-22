@@ -1,0 +1,70 @@
+977
+Alloc = 183 kB  TotalAlloc = 205 kB     Sys = 7251 kB   NumGC = 2
+csa len: 1000000
+Alloc = 19602 kB        TotalAlloc = 25544 kB   Sys = 34539 kB  NumGC = 6
+491.614s
+879
+Alloc = 181 kB  TotalAlloc = 237 kB     Sys = 7187 kB   NumGC = 2
+csa len: 900000
+Alloc = 17641 kB        TotalAlloc = 23017 kB   Sys = 34219 kB  NumGC = 5
+385.973s
+782
+Alloc = 185 kB  TotalAlloc = 241 kB     Sys = 7187 kB   NumGC = 2
+csa len: 800000
+Alloc = 15715 kB        TotalAlloc = 20506 kB   Sys = 29735 kB  NumGC = 5
+309.387s
+684
+Alloc = 183 kB  TotalAlloc = 238 kB     Sys = 7187 kB   NumGC = 2
+csa len: 700000
+Alloc = 16521 kB        TotalAlloc = 17992 kB   Sys = 29735 kB  NumGC = 4
+232.106s
+586
+Alloc = 181 kB  TotalAlloc = 239 kB     Sys = 6931 kB   NumGC = 2
+csa len: 600000
+Alloc = 14197 kB        TotalAlloc = 15479 kB   Sys = 21278 kB  NumGC = 4
+168.735s
+489
+Alloc = 183 kB  TotalAlloc = 204 kB     Sys = 7187 kB   NumGC = 2
+csa len: 500000
+Alloc = 11896 kB        TotalAlloc = 12948 kB   Sys = 21534 kB  NumGC = 3
+116.836s
+391
+Alloc = 182 kB  TotalAlloc = 202 kB     Sys = 7187 kB   NumGC = 2
+csa len: 400000
+Alloc = 9538 kB TotalAlloc = 10380 kB   Sys = 17306 kB  NumGC = 3
+73.656s
+293
+Alloc = 181 kB  TotalAlloc = 238 kB     Sys = 7187 kB   NumGC = 2
+csa len: 300000
+Alloc = 7186 kB TotalAlloc = 7873 kB    Sys = 17050 kB  NumGC = 3
+42.861s
+196
+Alloc = 181 kB  TotalAlloc = 202 kB     Sys = 7187 kB   NumGC = 2
+csa len: 200000
+Alloc = 4073 kB TotalAlloc = 5316 kB    Sys = 12822 kB  NumGC = 3
+18.788s
+98
+Alloc = 183 kB  TotalAlloc = 238 kB     Sys = 8338 kB   NumGC = 2
+csa len: 100000
+Alloc = 2753 kB TotalAlloc = 2809 kB    Sys = 12566 kB  NumGC = 2
+4.922s
+49
+Alloc = 182 kB  TotalAlloc = 201 kB     Sys = 6931 kB   NumGC = 2
+csa len: 50000
+Alloc = 1486 kB TotalAlloc = 1505 kB    Sys = 8338 kB   NumGC = 2
+1.446s
+10
+Alloc = 181 kB  TotalAlloc = 201 kB     Sys = 6931 kB   NumGC = 2
+csa len: 10000
+Alloc = 493 kB  TotalAlloc = 513 kB     Sys = 7187 kB   NumGC = 2
+0.304s
+5
+Alloc = 181 kB  TotalAlloc = 239 kB     Sys = 7187 kB   NumGC = 2
+csa len: 5000
+Alloc = 332 kB  TotalAlloc = 390 kB     Sys = 7187 kB   NumGC = 2
+0.267s
+2
+Alloc = 183 kB  TotalAlloc = 202 kB     Sys = 6931 kB   NumGC = 2
+csa len: 2000
+Alloc = 246 kB  TotalAlloc = 265 kB     Sys = 6931 kB   NumGC = 2
+0.255s

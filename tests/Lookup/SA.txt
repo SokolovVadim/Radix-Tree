@@ -1,0 +1,78 @@
+879
+Alloc = 176 kB  TotalAlloc = 233 kB     Sys = 7187 kB   NumGC = 2
+Alloc = 5421 kB TotalAlloc = 6397 kB    Sys = 15900 kB  NumGC = 4
+Alloc = 5423 kB TotalAlloc = 6398 kB    Sys = 15900 kB  NumGC = 4
+Alloc = 142 kB  TotalAlloc = 6399 kB    Sys = 15900 kB  NumGC = 5
+0.334s
+782
+Alloc = 176 kB  TotalAlloc = 196 kB     Sys = 6931 kB   NumGC = 2
+Alloc = 4837 kB TotalAlloc = 5681 kB    Sys = 12566 kB  NumGC = 4
+Alloc = 4838 kB TotalAlloc = 5682 kB    Sys = 12566 kB  NumGC = 4
+Alloc = 142 kB  TotalAlloc = 5682 kB    Sys = 12566 kB  NumGC = 5
+0.330s
+684
+Alloc = 178 kB  TotalAlloc = 233 kB     Sys = 7187 kB   NumGC = 2
+Alloc = 4253 kB TotalAlloc = 5036 kB    Sys = 12822 kB  NumGC = 4
+Alloc = 4254 kB TotalAlloc = 5037 kB    Sys = 12822 kB  NumGC = 4
+Alloc = 142 kB  TotalAlloc = 5038 kB    Sys = 12822 kB  NumGC = 5
+0.319s
+586
+Alloc = 176 kB  TotalAlloc = 233 kB     Sys = 6931 kB   NumGC = 2
+Alloc = 3669 kB TotalAlloc = 4357 kB    Sys = 12822 kB  NumGC = 4
+Alloc = 3670 kB TotalAlloc = 4359 kB    Sys = 12822 kB  NumGC = 4
+Alloc = 142 kB  TotalAlloc = 4359 kB    Sys = 12822 kB  NumGC = 5
+0.306s
+489
+Alloc = 174 kB  TotalAlloc = 232 kB     Sys = 8594 kB   NumGC = 2
+Alloc = 3091 kB TotalAlloc = 3683 kB    Sys = 12822 kB  NumGC = 3
+Alloc = 3092 kB TotalAlloc = 3684 kB    Sys = 12822 kB  NumGC = 3
+Alloc = 139 kB  TotalAlloc = 3684 kB    Sys = 12822 kB  NumGC = 4
+0.298s
+391
+Alloc = 174 kB  TotalAlloc = 196 kB     Sys = 7187 kB   NumGC = 2
+Alloc = 2491 kB TotalAlloc = 2943 kB    Sys = 11416 kB  NumGC = 3
+Alloc = 2492 kB TotalAlloc = 2944 kB    Sys = 11416 kB  NumGC = 3
+Alloc = 139 kB  TotalAlloc = 2944 kB    Sys = 11416 kB  NumGC = 4
+0.288s
+293
+Alloc = 175 kB  TotalAlloc = 230 kB     Sys = 6675 kB   NumGC = 2
+Alloc = 1907 kB TotalAlloc = 2298 kB    Sys = 8338 kB   NumGC = 3
+Alloc = 1909 kB TotalAlloc = 2299 kB    Sys = 8338 kB   NumGC = 3
+Alloc = 139 kB  TotalAlloc = 2299 kB    Sys = 8338 kB   NumGC = 4
+0.275s
+196
+Alloc = 176 kB  TotalAlloc = 232 kB     Sys = 7187 kB   NumGC = 2
+Alloc = 1325 kB TotalAlloc = 1619 kB    Sys = 8594 kB   NumGC = 3
+Alloc = 1326 kB TotalAlloc = 1620 kB    Sys = 8594 kB   NumGC = 3
+Alloc = 142 kB  TotalAlloc = 1622 kB    Sys = 8594 kB   NumGC = 4
+0.274s
+98
+Alloc = 176 kB  TotalAlloc = 233 kB     Sys = 7187 kB   NumGC = 2
+Alloc = 741 kB  TotalAlloc = 940 kB     Sys = 7187 kB   NumGC = 3
+Alloc = 742 kB  TotalAlloc = 941 kB     Sys = 7187 kB   NumGC = 3
+Alloc = 141 kB  TotalAlloc = 941 kB     Sys = 7187 kB   NumGC = 4
+0.260s
+49
+Alloc = 174 kB  TotalAlloc = 195 kB     Sys = 8338 kB   NumGC = 2
+Alloc = 451 kB  TotalAlloc = 566 kB     Sys = 8338 kB   NumGC = 3
+Alloc = 452 kB  TotalAlloc = 568 kB     Sys = 8338 kB   NumGC = 3
+Alloc = 140 kB  TotalAlloc = 570 kB     Sys = 8338 kB   NumGC = 4
+0.262s
+10
+Alloc = 178 kB  TotalAlloc = 234 kB     Sys = 7187 kB   NumGC = 2
+Alloc = 202 kB  TotalAlloc = 307 kB     Sys = 7187 kB   NumGC = 3
+Alloc = 203 kB  TotalAlloc = 309 kB     Sys = 7187 kB   NumGC = 3
+Alloc = 142 kB  TotalAlloc = 309 kB     Sys = 7187 kB   NumGC = 4
+0.254s
+5
+Alloc = 176 kB  TotalAlloc = 232 kB     Sys = 7187 kB   NumGC = 2
+Alloc = 171 kB  TotalAlloc = 271 kB     Sys = 7187 kB   NumGC = 3
+Alloc = 172 kB  TotalAlloc = 272 kB     Sys = 7187 kB   NumGC = 3
+Alloc = 142 kB  TotalAlloc = 274 kB     Sys = 7187 kB   NumGC = 4
+0.251s
+2
+Alloc = 173 kB  TotalAlloc = 195 kB     Sys = 6675 kB   NumGC = 2
+Alloc = 151 kB  TotalAlloc = 215 kB     Sys = 6931 kB   NumGC = 3
+Alloc = 153 kB  TotalAlloc = 216 kB     Sys = 6931 kB   NumGC = 3
+Alloc = 141 kB  TotalAlloc = 218 kB     Sys = 6931 kB   NumGC = 4
+0.250s

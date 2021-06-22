@@ -1,43 +1,75 @@
 package csa
 
 import (
-	"reflect"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"runtime"
 	"testing"
 )
 
 func BenchmarkCSA(b *testing.B) {
-	/*input := "abbaabbaaababbb$"
+	PrintMemUsage()
+	content, err := ioutil.ReadFile("C:\\Users\\Vadim\\GolandProjects\\Radix-Tree\\utils\\data.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	testStr := string(content)
 
-	csa := newCsa(input)
-	csa.psi = naivePsi(csa)
-	createBitVector(csa)
-	efCompress(csa)
-	printContents(csa)*/
-}
-
-func TestCsa(t *testing.T) {
-	input := "abbaabbaaababbb$"
-	suffixArray := []int{15, 7, 8, 3, 9, 4, 0, 11, 14, 6, 2, 10, 13, 5, 1, 12}
-	psiArray    := []uint32{0, 2, 4, 5, 11, 13, 14, 15, 0, 1, 3, 7, 8, 9, 10, 12}
-	bitVector   := []int{1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0}
-	bitString := "{1,4,7,9,16,19,21,23}"
-	csa := newCsa(input)
-	if !reflect.DeepEqual(suffixArray, csa.suffixOffsets) {
-		t.Errorf("suffix array is wrong")
-	}
-	if !reflect.DeepEqual(psiArray, csa.psi) {
-		t.Errorf("psi-array is wrong")
-	}
-	csa.createBitVector()
-	if !reflect.DeepEqual(bitVector, csa.bv) {
-		t.Errorf("bit vector is wrong")
-	}
+	csa := newCsa(testStr)
+	fmt.Println("csa len:", csa.length)
+	// fmt.Println("sa:", csa.suffixOffsets)
 	csa.efCompress()
-	if bitString != csa.ef.b.String() {
-		t.Errorf("bit map is wrong")
-	}
-	if !reflect.DeepEqual(csa.ef.getMany(len(csa.psi) / alphabetLength), psiArray[:len(csa.psi) / alphabetLength]) {
-		t.Errorf("bit map is wrong")
-	}
-	csa.printContents()
+	runtime.GC()
+	PrintMemUsage()
+
+	b.ResetTimer()
+    //	for i := 0; i < b.N; i++ {
+	//	csa.lookup(testStr[leftPos: rightPos])
+	// }
+	csa.lookup(testStr[leftPos: rightPos])
+	PrintMemUsage()
+
+	// Force GC to clear up, should see a memory drop
+	runtime.GC()
+	PrintMemUsage()
 }
+
+// PrintMemUsage outputs the current, total and OS memory being used. As well as the number
+// of garage collection cycles completed.
+func PrintMemUsage() {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
+	// fmt.Printf("Alloc = %v MiB", bToMb(m.Alloc))
+	fmt.Printf("Alloc = %v kB", bToKb(m.Alloc))
+	fmt.Printf("\tTotalAlloc = %v kB", bToKb(m.TotalAlloc))
+	fmt.Printf("\tSys = %v kB", bToKb(m.Sys))
+	fmt.Printf("\tNumGC = %v\n", m.NumGC)
+}
+
+func bToMb(b uint64) uint64 {
+	return b / 1024 / 1024
+}
+
+func bToKb(b uint64) uint64 {
+	return b / 1024
+}
+
+/*func TestCsa(t *testing.T) {
+	// PrintMemUsage()
+	// defer profile.Start(profile.MemProfile, profile.MemProfileRate(1)).Stop()
+	input := "adbbaabcbdaaccaaabcdabaabcabbacbadbdbabcdbcbc$"
+	csa := newCsa(input)
+	// csa.printContents()
+	csa.efCompress()
+	// runtime.GC()
+	// PrintMemUsage()
+	// fmt.Println("Lookup:")
+	csa.lookup("dbdba")
+	// PrintMemUsage()
+
+	// Force GC to clear up, should see a memory drop
+	// runtime.GC()
+	// PrintMemUsage()
+}*/

@@ -4,13 +4,15 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"testing"
 	"unicode"
 )
 
-const max_size = 9000000
+const max_size = 2000
+const dna_size = 1000000
 
 func parseJson(filename string) (string, error) {
 	jsonFile, err := os.Open(filename)
@@ -52,8 +54,8 @@ func parseJson(filename string) (string, error) {
 	return result, nil
 }
 
-func writeToFile(text string) error {
-	file, err := os.Create("data.txt")
+func writeToFile(text string, filename string) error {
+	file, err := os.Create(filename)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -78,12 +80,40 @@ func preprocessData(text string) string {
 	return string(byteSeq)
 }
 
-func TestParseJson(t *testing.T) {
+/*func TestParseJson(t *testing.T) {
+=======
 	text, err := parseJson("C:\\Users\\Vadim\\GolandProjects\\Gift_Cards\\Gift_Cards.json")
 	if err != nil {
 		t.Errorf("ParseJson failed! Error: %v", err)
 	}
-	err = writeToFile(text[:max_size])
+	// add EOF
+	text += "$"
+	err = writeToFile(text[:max_size], "data.txt")
+	if err != nil {
+		t.Errorf("writeToFile failed! Error: %v", err)
+	}
+}*/
+
+func parseDNA(filename string) (string, error) {
+	content, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convert []byte to string
+	text := string(content)
+	fmt.Println("len:", len(text))
+	return text, nil
+}
+
+func TestParseDNA(t *testing.T) {
+	text, err := parseDNA("C:\\Users\\Vadim\\GolandProjects\\TestCorpora\\dna.50MB\\dna.50MB")
+	if err != nil {
+		t.Errorf("ParseJson failed! Error: %v", err)
+	}
+	// add EOF
+	text += "$"
+	err = writeToFile(text[:dna_size], "dna.txt")
 	if err != nil {
 		t.Errorf("writeToFile failed! Error: %v", err)
 	}
